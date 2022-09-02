@@ -28,7 +28,7 @@ def calculation(input1, input2, input3, input4, input5, input6, input7):
     workbook.save(filename='output.xlsx')
     # Calculating
     ws = xw.Book("output.xlsx").sheets['Calculator']
-    re = xw.Book("output.xlsx").sheets['please do not modify']
+
 
     # Selecting data from
     # a single cell
