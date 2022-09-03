@@ -1,4 +1,13 @@
-# Reference:
+import pandas as pd
+import streamlit as st
+import calculation
+
+# Set-up
+st.set_page_config(page_title='Calculator')
+st.header('RAFT Polymerization Homopolymer Synthesis Calculator')
+st.subheader('Input Values')
+
+# Inputs
 # input1 = st.number_input('Molar Mass of Monomer (g/mol)')
 # input2 = st.number_input('Molar Mass of CTA (g/mol)')
 # input3 = st.number_input('Molar Mass of Initiator (g/mol)')
@@ -7,41 +16,46 @@
 # input6 = st.number_input('Desired total mass of polymer (g)')
 # input7 = st.number_input('Expected Conversion (%)')
 
-def calculation(input1, input2, input3, input4, input5, input6, input7):
+# Gathering Input
+col1, col2, col3 = st.columns(3)
 
-    molar_mass_of_polymer = input5 * input1
-    molar_ratio_monomer = input5
-    molar_ratio_cta = input5/input5
-    mass_monomer_one_mol_polymer = molar_ratio_monomer * input1
-    mass_cta_one_mol_polymer = molar_ratio_cta * input2
-    actual_mol_polymer = input6 / molar_mass_of_polymer
-    actual_mol_monomer_mol = actual_mol_polymer * input5
-    conversion_decimal = input7/100
-    conversion_inverse = 1 / conversion_decimal
-    mol_monomer_conversion_accounted_mol = actual_mol_monomer_mol * conversion_inverse
+with col1:
+    input1 = st.number_input('Molar Mass of Monomer (g/mol)', min_value=0.001)
+    input2 = st.number_input('Molar Mass of CTA (g/mol)', min_value=0.001)
+    input3 = st.number_input('Molar Mass of Initiator (g/mol)', min_value=0.001)
 
-    actual_mol_cta_mol = actual_mol_monomer_mol / molar_ratio_monomer
-    moles_of_initiator = molar_ratio_cta * input4
-    actual_mol_initiator_mol = actual_mol_cta_mol * moles_of_initiator
+with col2:
+    input5 = st.number_input('Desired Length of Polymer (# of units)', min_value=0.001)
+    input6 = st.number_input('Desired total mass of polymer (g)', min_value=0.001)
 
-    # Calculations:
-    actual_mass_of_monomer_g = input1 * mol_monomer_conversion_accounted_mol
-    actual_mass_of_monomer_mg = actual_mass_of_monomer_g * 1000
+with col3:
+    input4 = st.number_input('Initiator Ratio (to CTA)', min_value=0.001)
+    input7 = st.number_input('Expected Conversion (%)', min_value=0.001)
 
-    actual_mass_of_cta_g = input2 * actual_mol_cta_mol
-    actual_mass_of_cta_mg = actual_mass_of_cta_g * 1000
+# Empty sub-header for spacing reasons
+st.subheader("")
 
-    actual_mass_of_initiator_g = input3 * actual_mol_initiator_mol
-    actual_mass_of_initiator_mg = actual_mass_of_initiator_g * 1000
+# Button to kickstart calculation process
+col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
 
+with col3:
+    ispressed = st.button('Calculate')
 
+st.subheader('Results')
 
+# Display Results
+if ispressed:
+    # Calculate using Excel Sheet
+    results, result = calculation.calculation(input1, input2, input3, input4, input5, input6,
+                                              input7)
 
+    df = pd.DataFrame.from_dict(results)
+    df.index = ['(g)', '(mg)']
+    print(df)
+    df2 = pd.DataFrame(result, index=['g/mol'])
 
-    # Selecting data from
-    # a single cell
-    results = {'Actual Mass of Monomer': [actual_mass_of_monomer_g, actual_mass_of_monomer_mg],
-               'Actual Mass of CTA': [actual_mass_of_cta_g, actual_mass_of_cta_mg],
-               'Actual Mass of Initiator': [actual_mass_of_initiator_g, actual_mass_of_initiator_mg]}
-    result = {'Molar Mass of Polymer (g/mol)': molar_mass_of_polymer}
-    return (results, result)
+    st.table(df)
+    st.table(df2)
+
+else:
+    st.write('Press Calculate to see results')
