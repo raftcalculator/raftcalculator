@@ -1,11 +1,4 @@
-from openpyxl import load_workbook
-import xlwings as xw
-import pandas as pd
-import streamlit as st
-import plotly.express as px
-from PIL import Image
-
-
+# Reference:
 # input1 = st.number_input('Molar Mass of Monomer (g/mol)')
 # input2 = st.number_input('Molar Mass of CTA (g/mol)')
 # input3 = st.number_input('Molar Mass of Initiator (g/mol)')
@@ -15,26 +8,29 @@ from PIL import Image
 # input7 = st.number_input('Expected Conversion (%)')
 
 def calculation(input1, input2, input3, input4, input5, input6, input7):
-    workbook = load_workbook(filename='RAFT Calc.xlsx')
-    sheet = workbook.active
-    sheet["A2"] = float(input5)
-    sheet["B2"] = float(input6)
-    sheet["C2"] = float(input7)
-    sheet["A5"] = float(input1)
-    sheet["B5"] = float(input2)
-    sheet["C5"] = float(input3)
-    sheet["D5"] = float(input4)
+    # Constants:
+    mol_monomer_conversion_accounted_mol = 2500
+    actual_mol_cta_mol = 25
+    actual_mol_initiator_mol = 0.25
+    # Calculations:
+    actual_mass_of_monomer_g = input1 * mol_monomer_conversion_accounted_mol
+    actual_mass_of_monomer_mg = actual_mass_of_monomer_g * 1000
 
-    workbook.save(filename='output.xlsx')
-    # Calculating
-    ws = xw.Book("output.xlsx").sheets['Calculator']
+    actual_mass_of_cta_g = input2 * actual_mol_cta_mol
+    actual_mass_of_cta_mg = actual_mass_of_cta_g * 1000
+
+    actual_mass_of_initiator_g = input3 * actual_mol_initiator_mol
+    actual_mass_of_initiator_mg = actual_mass_of_initiator_g * 1000
+
+    molar_mass_of_polymer = input5 * input1
+
 
 
     # Selecting data from
     # a single cell
-    results = {'Actual Mass of Monomer': [ws.range("B9").value, ws.range("B10").value],
-               'Actual Mass of CTA': [ws.range("C9").value, ws.range("C10").value],
-               'Actual Mass of Initiator': [ws.range("D9").value, ws.range("D10").value]}
-    result = {'Molar Mass of Polymer (g/mol)': ws.range("A13").value}
+    results = {'Actual Mass of Monomer': [actual_mass_of_monomer_g, actual_mass_of_monomer_mg],
+               'Actual Mass of CTA': [actual_mass_of_cta_g, actual_mass_of_cta_mg],
+               'Actual Mass of Initiator': [actual_mass_of_initiator_g, actual_mass_of_initiator_mg]}
+    result = {'Molar Mass of Polymer (g/mol)': molar_mass_of_polymer}
     return (results, result)
 
