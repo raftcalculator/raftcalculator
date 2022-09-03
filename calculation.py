@@ -18,7 +18,7 @@ st.subheader('Input Values')
 # input7 = st.number_input('Expected Conversion (%)')
 
 # Gathering Input
-col1, col2, col3 = st.columns(4)
+col1, col2, col3 = st.columns(3)
 
 with col1:
     input1 = st.number_input('Molar Mass of Monomer (g/mol)')
